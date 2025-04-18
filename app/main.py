@@ -8,12 +8,14 @@ def main():
     # Uncomment this to pass the first stage
     #
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-    serveOn = server_socket.accept() # wait for client
-    req = serveOn[0].recv(1024).decode().split(" ")
-    if req[1] == "/":
-        serveOn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+    conn = server_socket.accept() # wait for client
+    req = conn[0].recv(1024).decode().split(" ")
+    if req[1].startswith("/echo/"):
+        content = req[1].removeprefix("/echo/")
+        conn[0].sendall(b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + 
+                        len(content) + "\r\n\r\n" + content)
     else:
-        serveOn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
+        conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
 
 
 if __name__ == "__main__":
