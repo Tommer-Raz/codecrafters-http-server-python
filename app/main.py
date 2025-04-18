@@ -13,7 +13,7 @@ def main():
     if req[1].startswith("/echo/"):
         content = req[1].removeprefix("/echo/")
         conn[0].sendall(b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: " + 
-                        len(content) + "\r\n\r\n" + content)
+                        str(len(content)).encode() + "\r\n\r\n" + content)
     else:
         conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
 
