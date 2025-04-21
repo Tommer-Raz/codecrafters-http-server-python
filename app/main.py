@@ -34,7 +34,7 @@ def main():
     
     while True:
         conn = server_socket.accept() # wait for client
-        threading.Thread(target=handle_request, args=conn).start()
+        threading.Thread(target=handle_request, args=(conn, )).start()
 
 if __name__ == "__main__":
     main()
