@@ -18,26 +18,32 @@ def send_res(conn, content, content_type="text/plain"):
 def handle_request(conn):
     req = conn[0].recv(1024).decode()
     endpoint = req.split(" ")[1]
-    if endpoint == "/":
-        conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
-    elif endpoint.startswith("/echo/"):
-        content = endpoint.removeprefix("/echo/")
-        send_res(conn, content)
-    elif endpoint.startswith("/files/"):
-        file_name = endpoint.removeprefix("/files/")
-        path = args.directory
-        try:
-            with open(path + file_name, "r") as content_file:
-                content = content_file.read()
-                send_res(conn, content, "application/octet-stream")
-        except:
+    method = req.split(" ")[0]
+    if method == "GET":
+        if endpoint == "/":
+            conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+        elif endpoint.startswith("/echo/"):
+            content = endpoint.removeprefix("/echo/")
+            send_res(conn, content)
+        elif endpoint.startswith("/files/"):
+            file_name = endpoint.removeprefix("/files/")
+            path = args.directory
+            try:
+                with open(path + file_name, "r") as content_file:
+                    content = content_file.read()
+                    send_res(conn, content, "application/octet-stream")
+            except:
+                conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
+        elif endpoint == "/user-agent":
+            user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
+            send_res(conn, user_agant)
+        else:
             conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
-    elif endpoint == "/user-agent":
-        user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
-        send_res(conn, user_agant)
-    else:
-        conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
-
+    elif method == "POST":
+        if endpoint.startswith("/files/"):
+            with open(path + file_name, "w") as content_file:
+                content_file.write(req.split("\r\n")[5])
+                conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
