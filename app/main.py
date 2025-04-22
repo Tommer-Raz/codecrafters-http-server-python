@@ -1,9 +1,15 @@
 import socket  # noqa: F401
 import threading
-def send_res(conn, content):
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--directory", help="full path directory")
+args = parser.parse_args()
+
+def send_res(conn, content, content_type="text/plain"):
     response = (
                     f"HTTP/1.1 200 OK\r\n"
-                    f"Content-Type: text/plain\r\n"
+                    f"Content-Type: {content_type}\r\n"
                     f"Content-Length: {len(content)}\r\n"
                     f"\r\n"
                     ).encode() + content.encode()
@@ -17,6 +23,15 @@ def handle_request(conn):
     elif endpoint.startswith("/echo/"):
         content = endpoint.removeprefix("/echo/")
         send_res(conn, content)
+    elif endpoint.startswith("/files/"):
+        file_name = endpoint.removeprefix("/files/")
+        path = args.directory
+        try:
+            with open(path + file_name, "r") as content_file:
+                content = content_file.read()
+                send_res(conn, content, "application/octet-stream")
+        except:
+            conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
     elif endpoint == "/user-agent":
         user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
         send_res(conn, user_agant)
