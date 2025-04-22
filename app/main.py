@@ -41,6 +41,8 @@ def handle_request(conn):
             conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
     elif method == "POST":
         if endpoint.startswith("/files/"):
+            file_name = endpoint.removeprefix("/files/")
+            path = args.directory
             with open(path + file_name, "w") as content_file:
                 content_file.write(req.split("\r\n")[5])
                 conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
