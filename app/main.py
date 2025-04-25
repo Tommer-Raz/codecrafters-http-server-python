@@ -28,7 +28,10 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
 
 def handle_request(conn):
     close = False
+    count = 0
     while True:
+        print(count)
+        count += 1
         req = conn[0].recv(1024).decode()
         endpoint = req.split(" ")[1]
         method = req.split(" ")[0]
