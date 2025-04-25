@@ -18,7 +18,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None):
     response += f"\r\n"
     
     response = response.encode() + content
-    print(response)
+    print(content)
     conn[0].sendall(response)
 
 def handle_request(conn):
