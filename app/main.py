@@ -38,7 +38,7 @@ def handle_request(conn):
             if endpoint == "/":
                 if close:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\nconnection: close\r\n\r\n")
-                    print(close)
+                    break
                 else:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
             elif endpoint.startswith("/echo/"):
@@ -60,6 +60,7 @@ def handle_request(conn):
                 user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
                 if close:
                     user_agant = req.split("\r\n")[3].removeprefix("User-Agent: ")
+                    break
                 send_res(conn, user_agant, "text/plain", None, close)
             else:
                 conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
