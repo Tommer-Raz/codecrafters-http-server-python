@@ -9,6 +9,7 @@ args = parser.parse_args()
 
 def send_res(conn, content, content_type="text/plain", encoding=None, close=False):
     length = len(content)
+    print(content)
     content = content.encode()
     response = "HTTP/1.1 200 OK\r\n"
     response += f"Content-Type: {content_type}\r\n"
