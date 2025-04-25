@@ -28,7 +28,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
 
 def handle_request(conn):
     close = False
-    while not close:
+    while True:
         req = conn[0].recv(1024).decode()
         endpoint = req.split(" ")[1]
         method = req.split(" ")[0]
