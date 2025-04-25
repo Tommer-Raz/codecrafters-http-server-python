@@ -16,8 +16,9 @@ def send_res(conn, content, content_type="text/plain", encoding=None):
        response += f"Content-Encoding: {encoding}\r\n"
        content = gzip.compress(content)
     response += f"\r\n"
-
+    
     response = response.encode() + content
+    print(response)
     conn[0].sendall(response)
 
 def handle_request(conn):
