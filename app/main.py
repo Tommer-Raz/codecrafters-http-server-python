@@ -29,7 +29,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
 def handle_request(conn):
     close = False
     count = 0
-    while True:
+    while not close:
         print(count)
         print(close)
         count += 1
