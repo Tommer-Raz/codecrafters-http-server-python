@@ -76,6 +76,7 @@ def handle_request(conn):
                     content_file.write(req.split("\r\n")[5])
                     conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
     print("finished!!!")
+    conn.close()
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
