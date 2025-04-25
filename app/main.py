@@ -36,7 +36,10 @@ def handle_request(conn):
         encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(", ")
         if method == "GET":
             if endpoint == "/":
-                conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+                if close:
+                    conn[0].sendall(b"HTTP/1.1 200 OK\r\nconnection: close\r\n")
+                else:
+                    conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
             elif endpoint.startswith("/echo/"):
                 content = endpoint.removeprefix("/echo/")
                 encoding = None
