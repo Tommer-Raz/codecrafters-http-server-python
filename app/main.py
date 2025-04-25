@@ -28,7 +28,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
 
 def handle_request(conn):
     close = False
-    while True:
+    while not close:
         req = conn[0].recv(1024).decode()
         endpoint = req.split(" ")[1]
         method = req.split(" ")[0]
@@ -39,7 +39,6 @@ def handle_request(conn):
             if endpoint == "/":
                 if close:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\nconnection: close\r\n\r\n")
-                    break
                 else:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
             elif endpoint.startswith("/echo/"):
@@ -48,8 +47,6 @@ def handle_request(conn):
                 if "gzip" in encodings:
                     encoding = "gzip"
                 send_res(conn, content, "text/plain", encoding, close)
-                if close:
-                    break
             elif endpoint.startswith("/files/"):
                 file_name = endpoint.removeprefix("/files/")
                 path = args.directory
@@ -64,8 +61,6 @@ def handle_request(conn):
                 if close:
                     user_agant = req.split("\r\n")[3].removeprefix("User-Agent: ")
                 send_res(conn, user_agant, "text/plain", None, close)
-                if close:
-                    break
             else:
                 conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
         elif method == "POST":
@@ -75,10 +70,6 @@ def handle_request(conn):
                 with open(path + file_name, "w") as content_file:
                     content_file.write(req.split("\r\n")[5])
                     conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
-        if close:
-            break
-    if close:
-        conn.close()
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
