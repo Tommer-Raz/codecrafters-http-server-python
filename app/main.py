@@ -9,7 +9,6 @@ args = parser.parse_args()
 
 def send_res(conn, content, content_type="text/plain", encoding=None, close=False):
     length = len(content)
-    print(content)
     content = content.encode()
     response = "HTTP/1.1 200 OK\r\n"
     response += f"Content-Type: {content_type}\r\n"
@@ -38,6 +37,7 @@ def handle_request(conn):
             if endpoint == "/":
                 if close:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\nconnection: close\r\n\r\n")
+                    print(close)
                 else:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
             elif endpoint.startswith("/echo/"):
