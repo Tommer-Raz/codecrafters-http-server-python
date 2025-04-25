@@ -38,7 +38,7 @@ def handle_request(conn):
             if endpoint == "/":
                 if close:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\nconnection: close\r\n\r\n")
-                    print(close)
+                    break
                 else:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
             elif endpoint.startswith("/echo/"):
@@ -47,6 +47,8 @@ def handle_request(conn):
                 if "gzip" in encodings:
                     encoding = "gzip"
                 send_res(conn, content, "text/plain", encoding, close)
+                if close:
+                    break
             elif endpoint.startswith("/files/"):
                 file_name = endpoint.removeprefix("/files/")
                 path = args.directory
