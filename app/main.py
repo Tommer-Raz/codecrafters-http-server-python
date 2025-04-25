@@ -42,14 +42,14 @@ def handle_request(conn):
                 encoding = None
                 if "gzip" in encodings:
                     encoding = "gzip"
-                send_res(conn, content, "text/plain", encoding)
+                send_res(conn, content, "text/plain", encoding, close)
             elif endpoint.startswith("/files/"):
                 file_name = endpoint.removeprefix("/files/")
                 path = args.directory
                 try:
                     with open(path + file_name, "r") as content_file:
                         content = content_file.read()
-                        send_res(conn, content, "application/octet-stream")
+                        send_res(conn, content, "application/octet-stream", None, close)
                 except:
                     conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
             elif endpoint == "/user-agent":
