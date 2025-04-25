@@ -31,6 +31,7 @@ def handle_request(conn):
     count = 0
     while True:
         print(count)
+        print(close)
         count += 1
         req = conn[0].recv(1024).decode()
         endpoint = req.split(" ")[1]
@@ -38,7 +39,6 @@ def handle_request(conn):
         print(req.split("\r\n")[2])
         if req.split("\r\n")[2].removeprefix("Connection: ") == "close":
             close = True
-        print(close)
         encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(", ")
         if method == "GET":
             if endpoint == "/":
