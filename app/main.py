@@ -84,7 +84,8 @@ def main():
     while not close:
         conn = server_socket.accept() # wait for client
         threading.Thread(target=handle_request, args=(conn, )).start()
-        print(close)
+        if close:
+            break
 
 if __name__ == "__main__":
     main()
