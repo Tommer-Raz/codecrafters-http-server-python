@@ -28,7 +28,7 @@ def handle_request(conn):
         elif endpoint.startswith("/echo/"):
             content = endpoint.removeprefix("/echo/")
             encoding = None
-            if encodings.index("gzip"):
+            if "gzip" in encodings:
                 encoding = "gzip"
             send_res(conn, content, "text/plain", encoding)
         elif endpoint.startswith("/files/"):
