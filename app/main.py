@@ -27,10 +27,10 @@ def handle_request(conn):
             conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
         elif endpoint.startswith("/echo/"):
             content = endpoint.removeprefix("/echo/")
-            print(req, encoding)
+            print(req, encodings)
             if not encodings.index("gzip"):
-                encoding = None
-            send_res(conn, content, "text/plain", encoding)
+                encodings = None
+            send_res(conn, content, "text/plain", encodings)
         elif endpoint.startswith("/files/"):
             file_name = endpoint.removeprefix("/files/")
             path = args.directory
