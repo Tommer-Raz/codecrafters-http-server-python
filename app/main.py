@@ -63,6 +63,8 @@ def handle_request(conn):
                 if close:
                     user_agant = req.split("\r\n")[3].removeprefix("User-Agent: ")
                 send_res(conn, user_agant, "text/plain", None, close)
+                if close:
+                    break
             else:
                 conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
         elif method == "POST":
