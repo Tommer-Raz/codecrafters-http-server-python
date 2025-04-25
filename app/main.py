@@ -1,6 +1,7 @@
 import socket  # noqa: F401
 import threading
 import argparse
+import gzip
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--directory", help="full path directory")
@@ -12,6 +13,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None):
     response += f"Content-Length: {len(content)}\r\n"
     if encoding is not None:
        response += f"Content-Encoding: {encoding}\r\n"
+       content = gzip.compress(content)
     response += f"\r\n"
 
     response = response.encode() + content.encode()
