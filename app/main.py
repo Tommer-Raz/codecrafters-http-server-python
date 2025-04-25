@@ -18,7 +18,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
        length = len(content)
     response += f"Content-Length: {length}\r\n"
     if close:
-        response += f"Connection: close"
+        response += f"Connection: close\r\n"
     response += f"\r\n"
     
     response = response.encode() + content
