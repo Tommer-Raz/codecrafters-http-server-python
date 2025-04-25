@@ -44,6 +44,7 @@ def handle_request(conn):
             encoding = None
             if "gzip" in encodings:
                 encoding = "gzip"
+            print(content)
             send_res(conn, content, "text/plain", encoding, close)
         elif endpoint.startswith("/files/"):
             file_name = endpoint.removeprefix("/files/")
