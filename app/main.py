@@ -6,25 +6,30 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--directory", help="full path directory")
 args = parser.parse_args()
 
-def send_res(conn, content, content_type="text/plain"):
-    response = (
-                    f"HTTP/1.1 200 OK\r\n"
-                    f"Content-Type: {content_type}\r\n"
-                    f"Content-Length: {len(content)}\r\n"
-                    f"\r\n"
-                    ).encode() + content.encode()
+def send_res(conn, content, content_type="text/plain", encoding=None):
+    response = "HTTP/1.1 200 OK\r\n"
+    response += f"Content-Type: {content_type}\r\n"
+    response += f"Content-Length: {len(content)}\r\n"
+    if encoding is not None:
+       response += f"Content-Encoding: {encoding}"
+    response += f"\r\n"
+
+    response = response.encode() + content.encode()
     conn[0].sendall(response)
 
 def handle_request(conn):
     req = conn[0].recv(1024).decode()
     endpoint = req.split(" ")[1]
     method = req.split(" ")[0]
+    encoding = req.split("\r\n")[4].removeprefix("Accept-Encoding: ")
     if method == "GET":
         if endpoint == "/":
             conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
         elif endpoint.startswith("/echo/"):
             content = endpoint.removeprefix("/echo/")
-            send_res(conn, content)
+            if encoding != "gzip":
+                encoding = None
+            send_res(conn, content, "text/plain", encoding)
         elif endpoint.startswith("/files/"):
             file_name = endpoint.removeprefix("/files/")
             path = args.directory
