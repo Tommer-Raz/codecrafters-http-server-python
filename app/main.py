@@ -21,14 +21,14 @@ def handle_request(conn):
     req = conn[0].recv(1024).decode()
     endpoint = req.split(" ")[1]
     method = req.split(" ")[0]
-    encoding = req.split("\r\n")[2].removeprefix("Accept-Encoding: ")
+    encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(",")
     if method == "GET":
         if endpoint == "/":
             conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
         elif endpoint.startswith("/echo/"):
             content = endpoint.removeprefix("/echo/")
             print(req, encoding)
-            if encoding != "gzip":
+            if not encodings.index("gzip"):
                 encoding = None
             send_res(conn, content, "text/plain", encoding)
         elif endpoint.startswith("/files/"):
