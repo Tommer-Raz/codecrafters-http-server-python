@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--directory", help="full path directory")
 args = parser.parse_args()
 
-def send_res(conn, content, content_type="text/plain", encoding=None):
+def send_res(conn, content, content_type="text/plain", encoding=None, close=False):
     length = len(content)
     content = content.encode()
     response = "HTTP/1.1 200 OK\r\n"
@@ -17,6 +17,8 @@ def send_res(conn, content, content_type="text/plain", encoding=None):
        content = gzip.compress(content)
        length = len(content)
     response += f"Content-Length: {length}\r\n"
+    if close:
+        response += f"Connection: close"
     response += f"\r\n"
     
     response = response.encode() + content
@@ -51,7 +53,7 @@ def handle_request(conn):
                     conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
             elif endpoint == "/user-agent":
                 user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
-                send_res(conn, user_agant)
+                send_res(conn, user_agant, "text/plain", None, close)
             else:
                 conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
         elif method == "POST":
