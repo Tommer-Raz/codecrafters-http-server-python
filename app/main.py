@@ -8,12 +8,13 @@ parser.add_argument("-d", "--directory", help="full path directory")
 args = parser.parse_args()
 
 def send_res(conn, content, content_type="text/plain", encoding=None):
+    content = content.encode()
     response = "HTTP/1.1 200 OK\r\n"
     response += f"Content-Type: {content_type}\r\n"
     response += f"Content-Length: {len(content)}\r\n"
     if encoding is not None:
        response += f"Content-Encoding: {encoding}\r\n"
-       content = gzip.compress(content.encode())
+       content = gzip.compress(content)
     response += f"\r\n"
 
     response = response.encode() + content
