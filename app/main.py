@@ -27,6 +27,7 @@ def handle_request(conn):
             conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
         elif endpoint.startswith("/echo/"):
             content = endpoint.removeprefix("/echo/")
+            print(req, encoding)
             if encoding != "gzip":
                 encoding = None
             send_res(conn, content, "text/plain", encoding)
