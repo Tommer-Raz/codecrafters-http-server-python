@@ -21,7 +21,7 @@ def handle_request(conn):
     req = conn[0].recv(1024).decode()
     endpoint = req.split(" ")[1]
     method = req.split(" ")[0]
-    encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(",")
+    encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(", ")
     if method == "GET":
         if endpoint == "/":
             conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
