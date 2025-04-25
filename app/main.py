@@ -9,12 +9,14 @@ args = parser.parse_args()
 
 def send_res(conn, content, content_type="text/plain", encoding=None):
     content = content.encode()
+    length = len(content)
     response = "HTTP/1.1 200 OK\r\n"
     response += f"Content-Type: {content_type}\r\n"
     if encoding is not None:
        response += f"Content-Encoding: {encoding}\r\n"
        content = gzip.compress(content)
-    response += f"Content-Length: {len(content)}\r\n"
+       length = len(content)
+    response += f"Content-Length: {length}\r\n"
     response += f"\r\n"
     
     response = response.encode() + content
