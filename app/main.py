@@ -57,7 +57,8 @@ def handle_request(conn):
                     conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
             elif endpoint == "/user-agent":
                 user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
-                print(close)
+                if close:
+                    user_agant = req.split("\r\n")[3].removeprefix("User-Agent: ")
                 send_res(conn, user_agant, "text/plain", None, close)
             else:
                 conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
