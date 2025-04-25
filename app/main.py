@@ -77,7 +77,8 @@ def handle_request(conn):
                     conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
         if close:
             break
-    conn.close()
+    if close:
+        conn.close()
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
