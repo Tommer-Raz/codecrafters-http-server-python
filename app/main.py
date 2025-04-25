@@ -6,6 +6,7 @@ import gzip
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--directory", help="full path directory")
 args = parser.parse_args()
+close = False
 
 def send_res(conn, content, content_type="text/plain", encoding=None, close=False):
     length = len(content)
@@ -78,7 +79,7 @@ def main():
     #
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     
-    while True:
+    while not close:
         conn = server_socket.accept() # wait for client
         threading.Thread(target=handle_request, args=(conn, )).start()
 
