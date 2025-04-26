@@ -43,7 +43,7 @@ def handle_request(conn):
         if method == "GET":
             if endpoint == "/":
                 if close:
-                    conn[0].sendall(b"HTTP/1.1 200 OK\r\nconnection: close\r\n\r\n")
+                    conn[0].sendall(b"HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")
                 else:
                     conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
             elif endpoint.startswith("/echo/"):
