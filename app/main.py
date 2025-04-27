@@ -88,7 +88,7 @@ def main():
     
     while True:
         conn, address = server_socket.accept() # wait for client
-        threading.Thread(target=handle_request, args=(conn, address)).start()
+        threading.Thread(target=handle_request, args=(conn, address,)).start()
         # conn.close()
 
 if __name__ == "__main__":
