@@ -74,10 +74,10 @@ def handle_request(conn):
                         conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
     except Exception as e:
         print(f"Error handling client: {e}")
-    try:
-        conn.close()
-    except Exception as e:
-        print(f"Error handling client: {e}")
+    finally:
+        conn[0].close()
+    # except Exception as e:
+    #     print(f"Error handling client: {e}")
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
