@@ -75,6 +75,7 @@ def handle_request(conn):
                 with open(path + file_name, "w") as content_file:
                     content_file.write(req.split("\r\n")[5])
                     conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
+    conn.close()
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -87,7 +88,7 @@ def main():
     while True:
         conn = server_socket.accept() # wait for client
         threading.Thread(target=handle_request, args=(conn, )).start()
-        conn.close()
+        # conn.close()
 
 if __name__ == "__main__":
     main()
