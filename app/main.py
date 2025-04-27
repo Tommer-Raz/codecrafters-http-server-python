@@ -28,55 +28,54 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
 
 def handle_request(conn):
     close = False
-    count = 0
-    while not close:
-        print(count)
-        print(close)
-        count += 1
-        req = conn[0].recv(1024).decode()
-        endpoint = req.split(" ")[1]
-        method = req.split(" ")[0]
-        print(req.split("\r\n")[2])
-        if req.split("\r\n")[2].removeprefix("Connection: ") == "close":
-            close = True
-        encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(", ")
-        if method == "GET":
-            if endpoint == "/":
-                if close:
-                    conn[0].sendall(b"HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")
+
+    try:
+        while not close:
+            req = conn[0].recv(1024).decode()
+            endpoint = req.split(" ")[1]
+            method = req.split(" ")[0]
+            if req.split("\r\n")[2].removeprefix("Connection: ") == "close":
+                close = True
+            encodings = req.split("\r\n")[2].removeprefix("Accept-Encoding: ").split(", ")
+            if method == "GET":
+                if endpoint == "/":
+                    if close:
+                        conn[0].sendall(b"HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")
+                    else:
+                        conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+                elif endpoint.startswith("/echo/"):
+                    content = endpoint.removeprefix("/echo/")
+                    encoding = None
+                    if "gzip" in encodings:
+                        encoding = "gzip"
+                    send_res(conn, content, "text/plain", encoding, close)
+                elif endpoint.startswith("/files/"):
+                    file_name = endpoint.removeprefix("/files/")
+                    path = args.directory
+                    try:
+                        with open(path + file_name, "r") as content_file:
+                            content = content_file.read()
+                            send_res(conn, content, "application/octet-stream", None, close)
+                    except:
+                        conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
+                elif endpoint == "/user-agent":
+                    user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
+                    if close:
+                        user_agant = req.split("\r\n")[3].removeprefix("User-Agent: ")
+                    send_res(conn, user_agant, "text/plain", None, close)
                 else:
-                    conn[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
-            elif endpoint.startswith("/echo/"):
-                content = endpoint.removeprefix("/echo/")
-                encoding = None
-                if "gzip" in encodings:
-                    encoding = "gzip"
-                send_res(conn, content, "text/plain", encoding, close)
-            elif endpoint.startswith("/files/"):
-                file_name = endpoint.removeprefix("/files/")
-                path = args.directory
-                try:
-                    with open(path + file_name, "r") as content_file:
-                        content = content_file.read()
-                        send_res(conn, content, "application/octet-stream", None, close)
-                except:
                     conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
-            elif endpoint == "/user-agent":
-                user_agant = req.split("\r\n")[2].removeprefix("User-Agent: ")
-                if close:
-                    user_agant = req.split("\r\n")[3].removeprefix("User-Agent: ")
-                send_res(conn, user_agant, "text/plain", None, close)
-            else:
-                conn[0].sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
-        elif method == "POST":
-            if endpoint.startswith("/files/"):
-                file_name = endpoint.removeprefix("/files/")
-                path = args.directory
-                with open(path + file_name, "w") as content_file:
-                    content_file.write(req.split("\r\n")[5])
-                    conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
-        if close:
-            conn.close()
+            elif method == "POST":
+                if endpoint.startswith("/files/"):
+                    file_name = endpoint.removeprefix("/files/")
+                    path = args.directory
+                    with open(path + file_name, "w") as content_file:
+                        content_file.write(req.split("\r\n")[5])
+                        conn[0].sendall(b"HTTP/1.1 201 Created\r\n\r\n")
+    except Exception as e:
+        print(f"Error handling client: {e}")
+    finally:
+        conn.close()
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
