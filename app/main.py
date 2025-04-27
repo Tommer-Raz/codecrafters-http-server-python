@@ -26,7 +26,7 @@ def send_res(conn, content, content_type="text/plain", encoding=None, close=Fals
 
     conn[0].sendall(response)
 
-def handle_request(conn):
+def handle_request(conn, address):
     close = False
 
     try:
@@ -76,6 +76,7 @@ def handle_request(conn):
         print(f"Error handling client: {e}")
     finally:
         conn.close()
+        print(f"Connection with {address} closed")
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -86,8 +87,8 @@ def main():
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     
     while True:
-        conn = server_socket.accept() # wait for client
-        threading.Thread(target=handle_request, args=(conn, )).start()
+        conn, address = server_socket.accept() # wait for client
+        threading.Thread(target=handle_request, args=(conn, address)).start()
         # conn.close()
 
 if __name__ == "__main__":
